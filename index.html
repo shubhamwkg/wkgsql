@@ -1,519 +1,203 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SQL Functions & Concepts Quick Reference</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #333;
-            line-height: 1.6;
-            min-height: 100vh;
-            padding: 20px;
-        }
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background: rgba(255, 255, 255, 0.98);
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(10px);
-            padding: 40px;
-        }
-        h1 {
-            text-align: center;
-            color: #2c3e50;
-            margin-bottom: 30px;
-            font-size: 2.5em;
-            font-weight: 700;
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        .difficulty-level {
-            margin-bottom: 40px;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-        }
-        .level-header {
-            padding: 20px;
-            color: white;
-            font-size: 1.4em;
-            font-weight: 600;
-            text-align: center;
-            position: relative;
-        }
-        .beginner { background: linear-gradient(135deg, #56ab2f, #a8e6cf); }
-        .intermediate { background: linear-gradient(135deg, #f093fb, #f5576c); }
-        .advanced { background: linear-gradient(135deg, #4facfe, #00f2fe); }
-        .expert { background: linear-gradient(135deg, #43e97b, #38f9d7); }
-        .master { background: linear-gradient(135deg, #fa709a, #fee140); }
-        
-        .functions-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
-            gap: 20px;
-            padding: 20px;
-        }
-        .function-card {
-            background: #fff;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            border-left: 4px solid #667eea;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        .function-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
-        }
-        .function-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(90deg, #667eea, #764ba2);
-        }
-        .function-name {
-            font-size: 1.2em;
-            font-weight: 700;
-            color: #2c3e50;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-        }
-        .function-name::before {
-            content: '⚡';
-            margin-right: 8px;
-            font-size: 0.9em;
-        }
-        .function-desc {
-            color: #666;
-            font-size: 0.9em;
-            margin-bottom: 15px;
-            font-style: italic;
-        }
-        .sql-code {
-            background: #2d3748;
-            color: #e2e8f0;
-            padding: 15px;
-            border-radius: 8px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.85em;
-            line-height: 1.4;
-            overflow-x: auto;
-            border: 1px solid #4a5568;
-        }
-        .sql-keyword {
-            color: #63b3ed;
-            font-weight: bold;
-        }
-        .sql-string {
-            color: #68d391;
-        }
-        .sql-number {
-            color: #fbb6ce;
-        }
-        .sql-comment {
-            color: #a0aec0;
-            font-style: italic;
-        }
-        .dummy-data {
-            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-            padding: 25px;
-            border-radius: 15px;
-            margin-bottom: 30px;
-            border: 2px solid #dee2e6;
-        }
-        .dummy-data h2 {
-            color: #495057;
-            margin-bottom: 15px;
-            font-size: 1.4em;
-        }
-        .table-preview {
-            background: white;
-            border-radius: 8px;
-            padding: 15px;
-            margin: 10px 0;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-        .level-count {
-            position: absolute;
-            right: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(255, 255, 255, 0.2);
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.9em;
-        }
-    </style>
+<meta charset="utf-8"/>
+<title>SQL QuickRef – VS-Code Style</title>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<style>
+:root{
+  --bg:#1e1e1e; --fg:#d4d4d4; --cmt:#6a9955; --key:#569cd6; --fun:#dcdcaa;
+  --ff: 'Consolas', 'Fira Code', monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--ff);background:var(--bg);color:var(--fg);display:flex;flex-direction:column;align-items:center;padding-top:1rem}
+.tab-bar{display:flex;width:260px;margin-bottom:1rem}
+.tab{flex:1;background:#252526;border:0;color:var(--fg);padding:.5rem 0;cursor:pointer;border-bottom:2px solid transparent}
+.tab.active{background:var(--bg);border-bottom:2px solid var(--key);color:#fff}
+main{max-width:960px;width:100%;padding:0 1rem}
+h2{font-size:1.1rem;margin:.8rem 0 0.3rem;color:var(--key)}
+pre{position:relative;background:#252526;padding:.7rem;border-radius:4px;font-size:.8rem;margin:.4rem 0;overflow-x:auto}
+.copy{position:absolute;top:.4rem;right:.4rem;background:var(--key);color:#fff;border:0;padding:.2rem .5rem;font-size:.65rem;border-radius:2px;cursor:pointer}
+code .cmt{color:var(--cmt)} code .key{color:var(--key)} code .fun{color:var(--fun)}
+.hidden{display:none}
+</style>
+<script>
+function switchTab(lang){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.lang===lang));
+  document.querySelectorAll('.mssql,.pg').forEach(el=>el.classList.toggle('hidden',!el.classList.contains(lang)));
+}
+function copy(btn){
+  navigator.clipboard.writeText(btn.nextElementSibling.innerText);
+  btn.textContent='✓';
+  setTimeout(()=>btn.textContent='C',900);
+}
+</script>
 </head>
 <body>
-    <div class="container">
-        <h1>🚀 SQL Functions & Concepts Quick Reference</h1>
-        
-        <div class="dummy-data">
-            <h2>📊 Sample Data Structure</h2>
-            <div class="table-preview">
-                <strong>employees:</strong> id(1,2,3), name('Alice','Bob','Carol'), age(25,30,35), dept('IT','HR','IT'), salary(50000,60000,55000), hire_date('2020-01-15','2019-06-20','2021-03-10')
-            </div>
-            <div class="table-preview">
-                <strong>departments:</strong> dept_id(1,2), dept_name('IT','HR'), budget(100000,80000)
-            </div>
-            <div class="table-preview">
-                <strong>projects:</strong> proj_id(1,2), proj_name('WebApp','Mobile'), emp_id(1,3)
-            </div>
-        </div>
+<div class="tab-bar">
+  <button class="tab active" data-lang="mssql" onclick="switchTab('mssql')">MSSQL</button>
+  <button class="tab" data-lang="pg" onclick="switchTab('pg')">PostgreSQL</button>
+</div>
 
-        <!-- BEGINNER LEVEL -->
-        <div class="difficulty-level">
-            <div class="level-header beginner">
-                🌱 BEGINNER LEVEL
-                <span class="level-count">18 concepts</span>
-            </div>
-            <div class="functions-grid">
-                <div class="function-card">
-                    <div class="function-name">CREATE DATABASE</div>
-                    <div class="function-desc">Creates a new database</div>
-                    <div class="sql-code"><span class="sql-keyword">CREATE DATABASE</span> company;</div>
-                </div>
-                
-                <div class="function-card">
-                    <div class="function-name">USE</div>
-                    <div class="function-desc">Switches to a specific database</div>
-                    <div class="sql-code"><span class="sql-keyword">USE</span> company;</div>
-                </div>
-                
-                <div class="function-card">
-                    <div class="function-name">CREATE TABLE</div>
-                    <div class="function-desc">Creates a new table structure</div>
-                    <div class="sql-code"><span class="sql-keyword">CREATE TABLE</span> employees (id <span class="sql-keyword">INT</span>, name <span class="sql-keyword">VARCHAR</span>(<span class="sql-number">50</span>));</div>
-                </div>
-                
-                <div class="function-card">
-                    <div class="function-name">INSERT INTO</div>
-                    <div class="function-desc">Adds new records to a table</div>
-                    <div class="sql-code"><span class="sql-keyword">INSERT INTO</span> employees <span class="sql-keyword">VALUES</span> (<span class="sql-number">1</span>, <span class="sql-string">'Alice'</span>);</div>
-                </div>
-                
-                <div class="function-card">
-                    <div class="function-name">SELECT</div>
-                    <div class="function-desc">Retrieves data from tables</div>
-                    <div class="sql-code"><span class="sql-keyword">SELECT</span> * <span class="sql-keyword">FROM</span> employees;</div>
-                </div>
-                
-                <div class="function-card">
-                    <div class="function-name">WHERE</div>
-                    <div class="function-desc">Filters records based on conditions</div>
-                    <div class="sql-code"><span class="sql-keyword">SELECT</span> * <span class="sql-keyword">FROM</span> employees <span class="sql-keyword">WHERE</span> age = <span class="sql-number">25</span>;</div>
-                </div>
-                
-                <div class="function-card">
-                    <div class="function-name">ORDER BY</div>
-                    <div class="function-desc">Sorts results in ascending/descending order</div>
-                    <div class="sql-code"><span class="sql-keyword">SELECT</span> * <span class="sql-keyword">FROM</span> employees <span class="sql-keyword">ORDER BY</span> age;</div>
-                </div>
-                
-                <div class="function-card">
-                    <div class="function-name">Comparison Operators</div>
-                    <div class="function-desc">Compare values (=, <>, >, <, >=, <=)</div>
-                    <div class="sql-code"><span class="sql-keyword">SELECT</span> * <span class="sql-keyword">FROM</span> employees <span class="sql-keyword">WHERE</span> age > <span class="sql-number">25</span>;</div>
-                </div>
-                
-                <div class="function-card">
-                    <div class="function-name">IN</div>
-                    <div class="function-desc">Matches any value in a list</div>
-                    <div class="sql-code"><span class="sql-keyword">SELECT</span> * <span class="sql-keyword">FROM</span> employees <span class="sql-keyword">WHERE</span> age <span class="sql-keyword">IN</span> (<span class="sql-number">25</span>, <span class="sql-number">30</span>);</div>
-                </div>
-                
-                <div class="function-card">
-                    <div class="function-name">BETWEEN</div>
-                    <div class="function-desc">Filters values within a range</div>
-                    <div class="sql-code"><span class="sql-keyword">SELECT</span> * <span class="sql-keyword">FROM</span> employees <span class="sql-keyword">WHERE</span> age <span class="sql-keyword">BETWEEN</span> <span class="sql-number">25</span> <span class="sql-keyword">AND</span> <span class="sql-number">35</span>;</div>
-                </div>
-                
-                <div class="function-card">
-                    <div class="function-name">LIKE</div>
-                    <div class="function-desc">Pattern matching with wildcards</div>
-                    <div class="sql-code"><span class="sql-keyword">SELECT</span> * <span class="sql-keyword">FROM</span> employees <span class="sql-keyword">WHERE</span> name <span class="sql-keyword">LIKE</span> <span class="sql-string">'A%'</span>;</div>
-                </div>
-                
-                <div class="function-card">
-                    <div class="function-name">IS NULL / IS NOT NULL</div>
-                    <div class="function-desc">Checks for NULL values</div>
-                    <div class="sql-code"><span class="sql-keyword">SELECT</span> * <span class="sql-keyword">FROM</span> employees <span class="sql-keyword">WHERE</span> dept <span class="sql-keyword">IS NOT NULL</span>;</div>
-                </div>
-                
-                <div class="function-card">
-                    <div class="function-name">AND / OR</div>
-                    <div class="function-desc">Combines multiple conditions</div>
-                    <div class="sql-code"><span class="sql-keyword">SELECT</span> * <span class="sql-keyword">FROM</span> employees <span class="sql-keyword">WHERE</span> age > <span class="sql-number">25</span> <span class="sql-keyword">AND</span> dept = <span class="sql-string">'IT'</span>;</div>
-                </div>
-                
-                <div class="function-card">
-                    <div class="function-name">UPDATE</div>
-                    <div class="function-desc">Modifies existing records</div>
-                    <div class="sql-code"><span class="sql-keyword">UPDATE</span> employees <span class="sql-keyword">SET</span> age = <span class="sql-number">26</span> <span class="sql-keyword">WHERE</span> id = <span class="sql-number">1</span>;</div>
-                </div>
-                
-                <div class="function-card">
-                    <div class="function-name">DELETE</div>
-                    <div class="function-desc">Removes records from table</div>
-                    <div class="sql-code"><span class="sql-keyword">DELETE FROM</span> employees <span class="sql-keyword">WHERE</span> id = <span class="sql-number">1</span>;</div>
-                </div>
-                
-                <div class="function-card">
-                    <div class="function-name">DROP TABLE</div>
-                    <div class="function-desc">Removes entire table and data</div>
-                    <div class="sql-code"><span class="sql-keyword">DROP TABLE</span> employees;</div>
-                </div>
-                
-                <div class="function-card">
-                    <div class="function-name">TRUNCATE</div>
-                    <div class="function-desc">Removes all records, keeps structure</div>
-                    <div class="sql-code"><span class="sql-keyword">TRUNCATE TABLE</span> employees;</div>
-                </div>
-                
-                <div class="function-card">
-                    <div class="function-name">Modulo (%)</div>
-                    <div class="function-desc">Returns remainder of division</div>
-                    <div class="sql-code"><span class="sql-keyword">SELECT</span> * <span class="sql-keyword">FROM</span> employees <span class="sql-keyword">WHERE</span> id % <span class="sql-number">2</span> = <span class="sql-number">0</span>;</div>
-                </div>
-            </div>
-        </div>
+<main>
 
-        <!-- INTERMEDIATE LEVEL -->
-        <div class="difficulty-level">
-            <div class="level-header intermediate">
-                🔥 INTERMEDIATE LEVEL
-                <span class="level-count">16 concepts</span>
-            </div>
-            <div class="functions-grid">
-                <div class="function-card">
-                    <div class="function-name">ALTER TABLE ADD</div>
-                    <div class="function-desc">Adds new column to existing table</div>
-                    <div class="sql-code"><span class="sql-keyword">ALTER TABLE</span> employees <span class="sql-keyword">ADD</span> phone <span class="sql-keyword">VARCHAR</span>(<span class="sql-number">15</span>);</div>
-                </div>
-                
-                <div class="function-card">
-                    <div class="function-name">ALTER TABLE DROP</div>
-                    <div class="function-desc">Removes column from table</div>
-                    <div class="sql-code"><span class="sql-keyword">ALTER TABLE</span> employees <span class="sql-keyword">DROP COLUMN</span> phone;</div>
-                </div>
-                
-                <div class="function-card">
-                    <div class="function-name">INNER JOIN</div>
-                    <div class="function-desc">Returns matching records from both tables</div>
-                    <div class="sql-code"><span class="sql-keyword">SELECT</span> * <span class="sql-keyword">FROM</span> employees e <span class="sql-keyword">INNER JOIN</span> projects p <span class="sql-keyword">ON</span> e.id = p.emp_id;</div>
-                </div>
-                
-                <div class="function-card">
-                    <div class="function-name">LEFT JOIN</div>
-                    <div class="function-desc">Returns all from left table, matched from right</div>
-                    <div class="sql-code"><span class="sql-keyword">SELECT</span> * <span class="sql-keyword">FROM</span> employees e <span class="sql-keyword">LEFT JOIN</span> projects p <span class="sql-keyword">ON</span> e.id = p.emp_id;</div>
-                </div>
-                
-                <div class="function-card">
-                    <div class="function-name">RIGHT JOIN</div>
-                    <div class="function-desc">Returns all from right table, matched from left</div>
-                    <div class="sql-code"><span class="sql-keyword">SELECT</span> * <span class="sql-keyword">FROM</span> employees e <span class="sql-keyword">RIGHT JOIN</span> projects p <span class="sql-keyword">ON</span> e.id = p.emp_id;</div>
-                </div>
-                
-                <div class="function-card">
-                    <div class="function-name">FULL OUTER JOIN</div>
-                    <div class="function-desc">Returns all records from both tables</div>
-                    <div class="sql-code"><span class="sql-keyword">SELECT</span> * <span class="sql-keyword">FROM</span> employees e <span class="sql-keyword">FULL OUTER JOIN</span> projects p <span class="sql-keyword">ON</span> e.id = p.emp_id;</div>
-                </div>
-                
-                <div class="function-card">
-                    <div class="function-name">GROUP BY</div>
-                    <div class="function-desc">Groups rows by specified columns</div>
-                    <div class="sql-code"><span class="sql-keyword">SELECT</span> dept, <span class="sql-keyword">COUNT</span>(*) <span class="sql-keyword">FROM</span> employees <span class="sql-keyword">GROUP BY</span> dept;</div>
-                </div>
-                
-                <div class="function-card">
-                    <div class="function-name">COUNT()</div>
-                    <div class="function-desc">Counts number of rows</div>
-                    <div class="sql-code"><span class="sql-keyword">SELECT COUNT</span>(*) <span class="sql-keyword">FROM</span> employees;</div>
-                </div>
-                
-                <div class="function-card">
-                    <div class="function-name">SUM()</div>
-                    <div class="function-desc">Calculates sum of numeric column</div>
-                    <div class="sql-code"><span class="sql-keyword">SELECT SUM</span>(salary) <span class="sql-keyword">FROM</span> employees;</div>
-                </div>
-                
-                <div class="function-card">
-                    <div class="function-name">AVG()</div>
-                    <div class="function-desc">Calculates average of numeric column</div>
-                    <div class="sql-code"><span class="sql-keyword">SELECT AVG</span>(salary) <span class="sql-keyword">FROM</span> employees;</div>
-                </div>
-                
-                <div class="function-card">
-                    <div class="function-name">MAX()</div>
-                    <div class="function-desc">Finds maximum value in column</div>
-                    <div class="sql-code"><span class="sql-keyword">SELECT MAX</span>(salary) <span class="sql-keyword">FROM</span> employees;</div>
-                </div>
-                
-                <div class="function-card">
-                    <div class="function-name">MIN()</div>
-                    <div class="function-desc">Finds minimum value in column</div>
-                    <div class="sql-code"><span class="sql-keyword">SELECT MIN</span>(salary) <span class="sql-keyword">FROM</span> employees;</div>
-                </div>
-                
-                <div class="function-card">
-                    <div class="function-name">HAVING</div>
-                    <div class="function-desc">Filters grouped results</div>
-                    <div class="sql-code"><span class="sql-keyword">SELECT</span> dept, <span class="sql-keyword">COUNT</span>(*) <span class="sql-keyword">FROM</span> employees <span class="sql-keyword">GROUP BY</span> dept <span class="sql-keyword">HAVING COUNT</span>(*) > <span class="sql-number">1</span>;</div>
-                </div>
-                
-                <div class="function-card">
-                    <div class="function-name">DISTINCT</div>
-                    <div class="function-desc">Returns unique values only</div>
-                    <div class="sql-code"><span class="sql-keyword">SELECT DISTINCT</span> dept <span class="sql-keyword">FROM</span> employees;</div>
-                </div>
-                
-                <div class="function-card">
-                    <div class="function-name">TOP</div>
-                    <div class="function-desc">Limits number of returned rows</div>
-                    <div class="sql-code"><span class="sql-keyword">SELECT TOP</span> <span class="sql-number">2</span> * <span class="sql-keyword">FROM</span> employees;</div>
-                </div>
-                
-                <div class="function-card">
-                    <div class="function-name">Self JOIN</div>
-                    <div class="function-desc">Joins table with itself</div>
-                    <div class="sql-code"><span class="sql-keyword">SELECT</span> e1.name, e2.name <span class="sql-keyword">FROM</span> employees e1 <span class="sql-keyword">JOIN</span> employees e2 <span class="sql-keyword">ON</span> e1.dept = e2.dept;</div>
-                </div>
-            </div>
-        </div>
+<!-- ===== BASIC SELECT, ORDER, TOP / LIMIT ===== -->
+<h2>Basic SELECT, ORDER, TOP / LIMIT</h2>
+<pre><button class="copy">C</button><code class="language-sql mssql"><span class="cmt">-- all columns</span>
+<span class="key">SELECT</span> * <span class="key">FROM</span> Films;
+<span class="cmt">-- specific columns</span>
+<span class="key">SELECT</span> FilmName, ReleaseYear <span class="key">FROM</span> Films;
+<span class="cmt">-- descending, limit rows</span>
+<span class="key">SELECT</span> FilmName, ReleaseYear
+<span class="key">FROM</span> Films
+<span class="key">ORDER BY</span> ReleaseYear <span class="key">DESC</span>
+<span class="key">OFFSET</span> 0 <span class="key">ROWS FETCH NEXT</span> 5 <span class="key">ROWS ONLY</span>;</code><code class="language-sql pg hidden"><span class="cmt">-- all columns</span>
+<span class="key">SELECT</span> * <span class="key">FROM</span> employees;
+<span class="cmt">-- specific columns</span>
+<span class="key">SELECT</span> name, age <span class="key">FROM</span> employees;
+<span class="cmt">-- descending, limit rows</span>
+<span class="key">SELECT</span> name, age
+<span class="key">FROM</span> employees
+<span class="key">ORDER BY</span> age <span class="key">DESC</span>
+<span class="key">LIMIT</span> 5;</code></pre>
 
-        <!-- ADVANCED LEVEL -->
-        <div class="difficulty-level">
-            <div class="level-header advanced">
-                ⚡ ADVANCED LEVEL
-                <span class="level-count">14 concepts</span>
-            </div>
-            <div class="functions-grid">
-                <div class="function-card">
-                    <div class="function-name">NOT NULL</div>
-                    <div class="function-desc">Ensures column cannot have NULL values</div>
-                    <div class="sql-code"><span class="sql-keyword">CREATE TABLE</span> test (id <span class="sql-keyword">INT NOT NULL</span>);</div>
-                </div>
-                
-                <div class="function-card">
-                    <div class="function-name">UNIQUE</div>
-                    <div class="function-desc">Ensures all values in column are unique</div>
-                    <div class="sql-code"><span class="sql-keyword">CREATE TABLE</span> test (email <span class="sql-keyword">VARCHAR</span>(<span class="sql-number">50</span>) <span class="sql-keyword">UNIQUE</span>);</div>
-                </div>
-                
-                <div class="function-card">
-                    <div class="function-name">CHECK</div>
-                    <div class="function-desc">Validates data based on condition</div>
-                    <div class="sql-code"><span class="sql-keyword">CREATE TABLE</span> test (age <span class="sql-keyword">INT CHECK</span>(age > <span class="sql-number">0</span>));</div>
-                </div>
-                
-                <div class="function-card">
-                    <div class="function-name">DEFAULT</div>
-                    <div class="function-desc">Sets default value for column</div>
-                    <div class="sql-code"><span class="sql-keyword">CREATE TABLE</span> test (status <span class="sql-keyword">VARCHAR</span>(<span class="sql-number">10</span>) <span class="sql-keyword">DEFAULT</span> <span class="sql-string">'Active'</span>);</div>
-                </div>
-                
-                <div class="function-card">
-                    <div class="function-name">PRIMARY KEY</div>
-                    <div class="function-desc">Uniquely identifies each record</div>
-                    <div class="sql-code"><span class="sql-keyword">CREATE TABLE</span> test (id <span class="sql-keyword">INT PRIMARY KEY</span>);</div>
-                </div>
-                
-                <div class="function-card">
-                    <div class="function-name">FOREIGN KEY</div>
-                    <div class="function-desc">Links to primary key of another table</div>
-                    <div class="sql-code"><span class="sql-keyword">CREATE TABLE</span> orders (emp_id <span class="sql-keyword">INT FOREIGN KEY REFERENCES</span> employees(id));</div>
-                </div>
-                
-                <div class="function-card">
-                    <div class="function-name">CREATE INDEX</div>
-                    <div class="function-desc">Creates index for faster queries</div>
-                    <div class="sql-code"><span class="sql-keyword">CREATE INDEX</span> idx_name <span class="sql-keyword">ON</span> employees(name);</div>
-                </div>
-                
-                <div class="function-card">
-                    <div class="function-name">UNION</div>
-                    <div class="function-desc">Combines results, removes duplicates</div>
-                    <div class="sql-code"><span class="sql-keyword">SELECT</span> name <span class="sql-keyword">FROM</span> employees <span class="sql-keyword">UNION SELECT</span> proj_name <span class="sql-keyword">FROM</span> projects;</div>
-                </div>
-                
-                <div class="function-card">
-                    <div class="function-name">UNION ALL</div>
-                    <div class="function-desc">Combines results, keeps duplicates</div>
-                    <div class="sql-code"><span class="sql-keyword">SELECT</span> name <span class="sql-keyword">FROM</span> employees <span class="sql-keyword">UNION ALL SELECT</span> proj_name <span class="sql-keyword">FROM</span> projects;</div>
-                </div>
-                
-                <div class="function-card">
-                    <div class="function-name">CREATE VIEW</div>
-                    <div class="function-desc">Creates virtual table based on query</div>
-                    <div class="sql-code"><span class="sql-keyword">CREATE VIEW</span> emp_view <span class="sql-keyword">AS SELECT</span> name, dept <span class="sql-keyword">FROM</span> employees;</div>
-                </div>
-                
-                <div class="function-card">
-                    <div class="function-name">Subquery</div>
-                    <div class="function-desc">Query within another query</div>
-                    <div class="sql-code"><span class="sql-keyword">SELECT</span> * <span class="sql-keyword">FROM</span> employees <span class="sql-keyword">WHERE</span> id <span class="sql-keyword">IN</span> (<span class="sql-keyword">SELECT</span> emp_id <span class="sql-keyword">FROM</span> projects);</div>
-                </div>
-                
-                <div class="function-card">
-                    <div class="function-name">CASE WHEN</div>
-                    <div class="function-desc">Conditional logic in SELECT</div>
-                    <div class="sql-code"><span class="sql-keyword">SELECT CASE WHEN</span> age > <span class="sql-number">30</span> <span class="sql-keyword">THEN</span> <span class="sql-string">'Senior'</span> <span class="sql-keyword">ELSE</span> <span class="sql-string">'Junior'</span> <span class="sql-keyword">END FROM</span> employees;</div>
-                </div>
-                
-                <div class="function-card">
-                    <div class="function-name">EXISTS</div>
-                    <div class="function-desc">Tests for existence of subquery results</div>
-                    <div class="sql-code"><span class="sql-keyword">SELECT</span> * <span class="sql-keyword">FROM</span> employees e <span class="sql-keyword">WHERE EXISTS</span> (<span class="sql-keyword">SELECT</span> <span class="sql-number">1</span> <span class="sql-keyword">FROM</span> projects p <span class="sql-keyword">WHERE</span> p.emp_id = e.id);</div>
-                </div>
-                
-                <div class="function-card">
-                    <div class="function-name">IDENTITY</div>
-                    <div class="function-desc">Auto-incrementing column</div>
-                    <div class="sql-code"><span class="sql-keyword">CREATE TABLE</span> test (id <span class="sql-keyword">INT IDENTITY</span>(<span class="sql-number">1</span>,<span class="sql-number">1</span>));</div>
-                </div>
-            </div>
-        </div>
+<!-- ===== WHERE FILTERS ===== -->
+<h2>WHERE – numbers, text, dates, BETWEEN, IN, LIKE</h2>
+<pre><button class="copy">C</button><code class="language-sql mssql"><span class="cmt">-- equality / comparison</span>
+<span class="key">SELECT</span> * <span class="key">FROM</span> Films <span class="key">WHERE</span> RuntimeMinutes = 136;
+<span class="key">SELECT</span> * <span class="key">FROM</span> Films <span class="key">WHERE</span> RuntimeMinutes <span class="key">BETWEEN</span> 120 <span class="key">AND</span> 150;
+<span class="key">SELECT</span> * <span class="key">FROM</span> Films <span class="key">WHERE</span> FilmName <span class="key">LIKE</span> <span class="cmt">'%Matrix%'</span>;
+<span class="key">SELECT</span> * <span class="key">FROM</span> Films <span class="key">WHERE</span> <span class="fun">YEAR</span>(ReleaseDate) = 1999;</code><code class="language-sql pg hidden"><span class="cmt">-- equality / comparison</span>
+<span class="key">SELECT</span> * <span class="key">FROM</span> employees <span class="key">WHERE</span> age = 30;
+<span class="key">SELECT</span> * <span class="key">FROM</span> employees <span class="key">WHERE</span> age <span class="key">BETWEEN</span> 25 <span class="key">AND</span> 35;
+<span class="key">SELECT</span> * <span class="key">FROM</span> employees <span class="key">WHERE</span> name <span class="key">LIKE</span> <span class="cmt">'A%'</span>;
+<span class="key">SELECT</span> * <span class="key">FROM</span> employees <span class="key">WHERE</span> <span class="fun">EXTRACT</span>(<span class="key">YEAR</span> <span class="key">FROM</span> hire_date) = 2020;</code></pre>
 
-        <!-- EXPERT LEVEL -->
-        <div class="difficulty-level">
-            <div class="level-header expert">
-                🎯 EXPERT LEVEL
-                <span class="level-count">18 concepts</span>
-            </div>
-            <div class="functions-grid">
-                <div class="function-card">
-                    <div class="function-name">CREATE PROCEDURE</div>
-                    <div class="function-desc">Creates reusable SQL code block</div>
-                    <div class="sql-code"><span class="sql-keyword">CREATE PROCEDURE</span> GetEmp <span class="sql-keyword">AS SELECT</span> * <span class="sql-keyword">FROM</span> employees;</div>
-                </div>
-                
-                <div class="function-card">
-                    <div class="function-name">EXEC</div>
-                    <div class="function-desc">Executes stored procedure</div>
-                    <div class="sql-code"><span class="sql-keyword">EXEC</span> GetEmp;</div>
-                </div>
-                
-                <div class="function-card">
-                    <div class="function-name">ROW_NUMBER()</div>
-                    <div class="function-desc">Assigns sequential numbers to rows</div>
-                    <div class="sql-code"><span class="sql-keyword">SELECT</span> *, <span class="sql-keyword">ROW_NUMBER() OVER</span>(<span class="sql-keyword">ORDER BY</span> age) <span class="sql-
+<!-- ===== CALCULATED COLUMNS / ALIASES ===== -->
+<h2>Calculated columns & aliases</h2>
+<pre><button class="copy">C</button><code class="language-sql mssql"><span class="key">SELECT</span> FilmName,
+       BoxOffice - Budget <span class="key">AS</span> Profit,
+       (<span class="fun">CAST</span>(BoxOffice <span class="key">AS</span> <span class="key">BIGINT</span>) - Budget) * 100.0 / Budget <span class="key">AS</span> ROI
+<span class="key">FROM</span> Films;</code><code class="language-sql pg hidden"><span class="key">SELECT</span> name,
+       salary * 1.1 <span class="key">AS</span> new_salary,
+       <span class="fun">ROUND</span>(salary * 1.1, 2) <span class="key">AS</span> rounded
+<span class="key">FROM</span> employees;</code></pre>
+
+<!-- ===== CASE EXPRESSIONS ===== -->
+<h2>CASE expressions</h2>
+<pre><button class="copy">C</button><code class="language-sql mssql"><span class="key">SELECT</span> FilmName,
+       <span class="key">CASE</span>
+         <span class="key">WHEN</span> OscarWins = 0 <span class="key">THEN</span> <span class="cmt">'No Wins'</span>
+         <span class="key">WHEN</span> OscarWins <span class="key">BETWEEN</span> 1 <span class="key">AND</span> 3 <span class="key">THEN</span> <span class="cmt">'Award Winner'</span>
+         <span class="key">ELSE</span> <span class="cmt">'Multiple Winner'</span>
+       <span class="key">END</span> <span class="key">AS</span> AwardStatus
+<span class="key">FROM</span> Films;</code><code class="language-sql pg hidden"><span class="key">SELECT</span> name,
+       <span class="key">CASE</span>
+         <span class="key">WHEN</span> age < 30 <span class="key">THEN</span> <span class="cmt">'Junior'</span>
+         <span class="key">WHEN</span> age < 40 <span class="key">THEN</span> <span class="cmt">'Mid'</span>
+         <span class="key">ELSE</span> <span class="cmt">'Senior'</span>
+       <span class="key">END</span> <span class="key">AS</span> Level
+<span class="key">FROM</span> employees;</code></pre>
+
+<!-- ===== JOINS ===== -->
+<h2>JOINs (INNER, LEFT, RIGHT, FULL, SELF)</h2>
+<pre><button class="copy">C</button><code class="language-sql mssql"><span class="cmt">-- INNER</span>
+<span class="key">SELECT</span> F.FilmName, D.DirectorName
+<span class="key">FROM</span> Films F
+<span class="key">JOIN</span> Directors D <span class="key">ON</span> F.DirectorID = D.DirectorID;
+
+<span class="cmt">-- LEFT (keep all films)</span>
+<span class="key">SELECT</span> F.FilmName, D.DirectorName
+<span class="key">FROM</span> Films F
+<span class="key">LEFT JOIN</span> Directors D <span class="key">ON</span> F.DirectorID = D.DirectorID;
+
+<span class="cmt">-- SELF join (employee & manager)</span>
+<span class="key">SELECT</span> e1.name <span class="key">AS</span> Emp, e2.name <span class="key">AS</span> Mgr
+<span class="key">FROM</span> employees e1
+<span class="key">LEFT JOIN</span> employees e2 <span class="key">ON</span> e1.manager_id = e2.id;</code><code class="language-sql pg hidden"><span class="cmt">-- INNER</span>
+<span class="key">SELECT</span> e.name, d.dept_name
+<span class="key">FROM</span> employees e
+<span class="key">JOIN</span> departments d <span class="key">ON</span> e.dept_id = d.dept_id;
+
+<span class="cmt">-- LEFT (keep all employees)</span>
+<span class="key">SELECT</span> e.name, d.dept_name
+<span class="key">FROM</span> employees e
+<span class="key">LEFT JOIN</span> departments d <span class="key">ON</span> e.dept_id = d.dept_id;
+
+<span class="cmt">-- SELF join (same)</span></code></pre>
+
+<!-- ===== AGGREGATION & GROUPING ===== -->
+<h2>GROUP BY & HAVING</h2>
+<pre><button class="copy">C</button><code class="language-sql mssql"><span class="cmt">-- per director stats</span>
+<span class="key">SELECT</span> D.DirectorName,
+       <span class="fun">COUNT</span>(*) <span class="key">AS</span> Films,
+       <span class="fun">SUM</span>(<span class="fun">CAST</span>(BoxOffice <span class="key">AS</span> <span class="key">BIGINT</span>)) <span class="key">AS</span> TotalBox,
+       <span class="fun">AVG</span>(RuntimeMinutes) <span class="key">AS</span> AvgMin
+<span class="key">FROM</span> Films F
+<span class="key">JOIN</span> Directors D <span class="key">ON</span> F.DirectorID = D.DirectorID
+<span class="key">GROUP BY</span> D.DirectorName
+<span class="key">HAVING</span> <span class="fun">COUNT</span>(*) > 1;</code><code class="language-sql pg hidden"><span class="cmt">-- per department stats</span>
+<span class="key">SELECT</span> dept,
+       <span class="fun">COUNT</span>(*) <span class="key">AS</span> Emps,
+       <span class="fun">SUM</span>(salary) <span class="key">AS</span> TotalPay,
+       <span class="fun">AVG</span>(salary) <span class="key">AS</span> AvgSal
+<span class="key">FROM</span> employees
+<span class="key">GROUP BY</span> dept
+<span class="key">HAVING</span> <span class="fun">COUNT</span>(*) > 1;</code></pre>
+
+<!-- ===== SUB-QUERIES ===== -->
+<h2>Sub-queries & Correlated</h2>
+<pre><button class="copy">C</button><code class="language-sql mssql"><span class="cmt">-- scalar subquery</span>
+<span class="key">SELECT</span> FilmName <span class="key">FROM</span> Films
+<span class="key">WHERE</span> OscarWins = (<span class="key">SELECT</span> <span class="fun">MAX</span>(OscarWins) <span class="key">FROM</span> Films);
+
+<span class="cmt">-- correlated subquery</span>
+<span class="key">SELECT</span> F1.FilmName, D.DirectorName
+<span class="key">FROM</span> Films F1
+<span class="key">JOIN</span> Directors D <span class="key">ON</span> F1.DirectorID = D.DirectorID
+<span class="key">WHERE</span> F1.RuntimeMinutes = (
+  <span class="key">SELECT</span> <span class="fun">MAX</span>(F2.RuntimeMinutes)
+  <span class="key">FROM</span> Films F2
+  <span class="key">WHERE</span> F2.DirectorID = F1.DirectorID
+);</code><code class="language-sql pg hidden"><span class="cmt">-- scalar subquery</span>
+<span class="key">SELECT</span> name <span class="key">FROM</span> employees
+<span class="key">WHERE</span> salary = (<span class="key">SELECT</span> <span class="fun">MAX</span>(salary) <span class="key">FROM</span> employees);
+
+<span class="cmt">-- correlated subquery</span>
+<span class="key">SELECT</span> e1.name
+<span class="key">FROM</span> employees e1
+<span class="key">WHERE</span> e1.salary > (
+  <span class="key">SELECT</span> <span class="fun">AVG</span>(e2.salary)
+  <span class="key">FROM</span> employees e2
+  <span class="key">WHERE</span> e2.dept = e1.dept
+);</code></pre>
+
+<!-- ===== STRING / DATE FUNCTIONS ===== -->
+<h2>String & Date functions</h2>
+<pre><button class="copy">C</button><code class="language-sql mssql"><span class="cmt">-- strings</span>
+<span class="key">SELECT</span> <span class="fun">UPPER</span>(FilmName), <span class="fun">LOWER</span>(FilmName), <span class="fun">LEN</span>(FilmName),
+       <span class="fun">LEFT</span>(FilmName, 5), <span class="fun">RIGHT</span>(FilmName, 5)
+<span class="key">FROM</span> Films;
+<span class="cmt">-- date diff</span>
+<span class="key">SELECT</span> FilmName, <span class="fun">DATEDIFF</span>(day, ReleaseDate, <span class="fun">GETDATE</span>()) <span class="key">AS</span> DaysOld
+<span class="key">FROM</span> Films;</code><code class="language-sql pg hidden"><span class="cmt">-- strings</span>
+<span class="key">SELECT</span> <span class="fun">UPPER</span>(name), <span class="fun">LOWER</span>(name), <span class="fun">LENGTH</span>(name),
+       <span class="fun">LEFT</span>(name, 5), <span class="fun">RIGHT</span>(name, 5)
+<span class="key">FROM</span> employees;
+<span class="cmt">-- date diff</span>
+<span class="key">SELECT</span> name, <span class="fun">AGE</span>(<span class="fun">CURRENT_DATE</span>, hire_date) <span class="key">AS</span> AgeSinceHire
+<span class="key">FROM</span> employees;</code></pre>
+
+<!-- ===== WINDOW FUNCTIONS (bonus) ===== -->
+<h2>Window functions (ROW_NUMBER, RANK, DENSE_RANK)</h2>
+<pre><button class="copy">C</button><code class="language-sql mssql"><span class="key">SELECT</span> FilmName, BoxOffice,
+       <span class="fun">ROW_NUMBER</span>() <span class="key">OVER</span> (<span class="key">ORDER BY</span> BoxOffice <span class="key">DESC</span>) <span class="key">AS</span> rn,
+       <span class="fun">RANK</span>() <span class="key">OVER</span> (<span class="key">ORDER BY</span> BoxOffice <span class="key">DESC</span>) <span class="key">AS</span> rnk
+<span class="key">FROM</span> Films;</code><code class="language-sql pg hidden"><span class="key">SELECT</span> name, salary,
+       <span class="fun">ROW_NUMBER</span>() <span class="key">OVER</span> (<span class="key">ORDER BY</span> salary <span class="key">DESC</span>) <span class="key">AS</span> rn,
+       <span class="fun">RANK</span>() <span class="key">OVER</span> (<span class="key">PARTITION BY</span> dept <span class="key">ORDER BY</span> salary) <span class="key">AS</span> rnk
+<span class="key">FROM</span> employees;</code></pre>
+
+</main>
+</body>
+</html>
