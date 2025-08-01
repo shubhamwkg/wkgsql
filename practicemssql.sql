@@ -847,7 +847,7 @@ WHERE (
 );
 
 -- =====================================================
--- 4.12: ADVANCED PRACTICE QUERIES
+-- 4.12: ADVANCED PRACTICE QUERIES || E
 -- =====================================================
 
 -- Practice 71: Complex analysis query
