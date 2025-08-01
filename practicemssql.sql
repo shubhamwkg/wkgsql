@@ -178,6 +178,7 @@ INSERT INTO FilmActors (FilmID, ActorID, RoleName) VALUES
 (15, 11, 'Paul Atreides'),
 (16, 12, 'Louise Banks');
 
+
 -- =====================================================
 -- SECTION 4: PRACTICE QUERIES
 -- Run these queries one by one to practice each concept
@@ -268,13 +269,13 @@ FROM Films
 ORDER BY OscarWins DESC;
 
 -- =====================================================
--- 4.4: FILTERING (WHERE) ||
+-- 4.4: FILTERING (WHERE) || E
 -- =====================================================
 
 -- Practice 14: Number criteria - Equality
 SELECT FilmName, RuntimeMinutes
 FROM Films
-WHERE RuntimeMinutes = 120;
+WHERE RuntimeMinutes = 117;
 
 -- Practice 15: Number criteria - Comparison
 SELECT FilmName, RuntimeMinutes
@@ -346,7 +347,7 @@ FROM Films
 WHERE (ReleaseYear > 2000 AND RuntimeMinutes > 150) OR OscarWins > 5;
 
 -- =====================================================
--- 4.5: CALCULATED COLUMNS
+-- 4.5: CALCULATED COLUMNS || E
 -- =====================================================
 
 -- Practice 28: Basic calculation
@@ -393,7 +394,7 @@ FROM Films
 WHERE Budget > 0;
 
 -- =====================================================
--- 4.6: CASE EXPRESSIONS
+-- 4.6: CASE EXPRESSIONS || E
 -- =====================================================
 
 -- Practice 33: CASE with numbers
@@ -428,7 +429,7 @@ SELECT
         WHEN ReleaseYear < 2000 THEN 'Modern Era'
         ELSE 'Digital Age'
     END AS Era
-FROM Films;
+FROM Films ORDER BY Era;
 
 -- Practice 36: CASE for Oscar categories
 SELECT 
@@ -454,10 +455,10 @@ FROM Films
 WHERE CASE
         WHEN RuntimeMinutes < 120 THEN 'Short'
         ELSE 'Long'
-    END = 'Long';
+    END = 'Short';
 
 -- =====================================================
--- 4.7: JOINS
+-- 4.7: JOINS || E
 -- =====================================================
 
 -- Practice 38: INNER JOIN
@@ -592,20 +593,24 @@ SELECT
         THEN DATEDIFF(year, D.BirthDate, GETDATE()) - 1
         ELSE DATEDIFF(year, D.BirthDate, GETDATE())
     END AS AccurateAge
-FROM Directors;
+FROM Directors D;
 
 -- =====================================================
--- 4.9: GROUPING AND AGGREGATION
+-- 4.9: GROUPING AND AGGREGATION || E
 -- =====================================================
 
 -- Practice 52: Basic aggregate functions
 SELECT 
+    OscarWins,
     COUNT(*) AS TotalFilms,
     AVG(RuntimeMinutes) AS AverageRuntime,
     MIN(ReleaseYear) AS OldestFilm,
     MAX(ReleaseYear) AS NewestFilm,
     SUM(CAST(BoxOffice AS BIGINT)) AS TotalBoxOffice
-FROM Films;
+FROM Films
+GROUP BY OscarWins;
+
+
 
 -- Practice 53: GROUP BY single column
 SELECT 
@@ -622,11 +627,16 @@ SELECT
     D.DirectorName,
     COUNT(*) AS FilmCount,
     AVG(F.RuntimeMinutes) AS AvgRuntime,
-    MAX(F.OscarWins) AS MostOscars
+    SUM(F.OscarWins) AS AllOscars
 FROM Films F
 INNER JOIN Directors D ON F.DirectorID = D.DirectorID
 GROUP BY D.DirectorName
 ORDER BY FilmCount DESC;
+
+SELECT F.FilmName, F.ReleaseYear, D.DirectorName
+FROM Films F INNER JOIN Directors D ON F.DirectorID = D.DirectorID
+WHERE D.DirectorName = 'James Cameron';
+
 
 -- Practice 55: GROUP BY multiple columns
 SELECT 
@@ -663,6 +673,7 @@ ORDER BY TotalBoxOffice DESC;
 
 -- Practice 58: WITH ROLLUP
 SELECT 
+    ReleaseYear,
     ISNULL(CAST(ReleaseYear AS VARCHAR(10)), 'Grand Total') AS Year,
     COUNT(*) AS FilmCount,
     SUM(CAST(BoxOffice AS BIGINT)) AS TotalBoxOffice
@@ -694,7 +705,7 @@ GROUP BY
 ORDER BY MIN(ReleaseYear);
 
 -- =====================================================
--- 4.10: SUBQUERIES
+-- 4.10: SUBQUERIES || E
 -- =====================================================
 
 -- Practice 60: Simple subquery in WHERE
