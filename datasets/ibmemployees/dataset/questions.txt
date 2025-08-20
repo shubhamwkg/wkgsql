@@ -1,0 +1,46 @@
+﻿SQL Queries to mastering Windows Functions
+Query 1: Ranking Employee Salaries Within Each Department
+* Business Question: "How does each employee's monthly income rank within their respective department? Show the difference between ROW_NUMBER, RANK, and DENSE_RANK."
+* Window Function(s) Used: ROW_NUMBER(), RANK(), DENSE_RANK()
+Query 2: Comparing Individual Income to the Department Average
+* Business Question: "For each employee, show their monthly income alongside the average monthly income for their department, and calculate the difference."
+* Window Function(s) Used: AVG()
+Query 3: Identifying the Top 3 Employees by Salary Hike per Department
+* Business Question: "Who are the three employees who received the highest percentage salary hike in each department?"
+* Window Function(s) Used: RANK(), Common Table Expression (CTE)
+Query 4: Assigning Employees to Salary Quartiles
+* Business Question: "Divide employees within each job level into four salary quartiles to understand income distribution."
+* Window Function(s) Used: NTILE(4)
+Query 5: Displaying Department Headcount on Each Employee Row
+* Business Question: "For each employee, show the total number of people who work in their department."
+* Window Function(s) Used: COUNT()
+Query 6: Calculating the Salary Gap to the Next Highest-Paid Colleague
+* Business Question: "Within each department, what is the salary difference between each employee and the person who is paid just above them?"
+* Window Function(s) Used: LAG()
+Query 7: Comparing an Employee's Salary to the Department's Highest Earner
+* Business Question: "For every employee, show their salary next to the absolute highest salary in their department."
+* Window Function(s) Used: FIRST_VALUE()
+Query 8: Calculating a 3-Person Moving Average of Job Satisfaction by Tenure
+* Business Question: "To smooth out fluctuations, what is the 3-person moving average of job satisfaction scores, ordered by tenure (YearsAtCompany), within each job role?"
+* Window Function(s) Used: AVG() with a framing clause
+Query 9: Identifying Employees Earning Less Than the Previous Hire in Their Role
+* Business Question: "Are there instances where a new hire in a specific job role is earning less than the person hired just before them? (Assuming EmployeeNumber approximates hiring order)."
+* Window Function(s) Used: LAG()
+Query 10: Calculating Each Employee's Contribution to Departmental Salary
+* Business Question: "What percentage of the total departmental salary budget does each employee's monthly income represent?"
+* Window Function(s) Used: SUM()
+Query 11: Finding the Most Recently Promoted Employee in Each Department
+* Business Question: "For each department, who is the employee with the fewest years since their last promotion?"
+* Window Function(s) Used: FIRST_VALUE()
+Query 12: Ranking Departments by Their Highest Individual Salary Hike
+* Business Question: "Which department gave the single largest percentage salary hike to an individual employee, and what was that percentage?"
+* Window Function(s) Used: MAX(), DENSE_RANK()
+Query 13: Identifying Junior Employees Earning More Than Senior Averages
+* Business Question: "Find all employees at Job Level 1 whose monthly income is higher than the average monthly income of all employees at Job Level 2."
+* Window Function(s) Used: AVG() combined with a subquery
+Query 14: Calculating the Cumulative Distribution of Job Satisfaction
+* Business Question: "What is the cumulative distribution of employees based on their job satisfaction score? In other words, what percentage of employees have a satisfaction score less than or equal to the current employee's score?"
+* Window Function(s) Used: CUME_DIST()
+Query 15: Finding the Salary Difference from the Lowest-Paid Person in the Role
+* Business Question: "For each employee, how much more do they earn than the lowest-paid person who shares their same job role?"
+* Window Function(s) Used: FIRST_VALUE()
