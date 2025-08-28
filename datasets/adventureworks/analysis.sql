@@ -1,15 +1,26 @@
 
 -- ADVENTURE WORK || CTEs Mastery
 
-SELECT * FROM sales
-SELECT * FROM salesperson
-SELECT * FROM salespersonregion
-SELECT * FROM region
-SELECT * FROM reseller
-SELECT * FROM product
-SELECT * FROM targets
+-- Core sales model
+SELECT * FROM sales LIMIT 10;
+SELECT * FROM salesperson LIMIT 10;
+SELECT * FROM salespersonregion LIMIT 10;
+SELECT * FROM region LIMIT 10;
+SELECT * FROM reseller LIMIT 10;
+SELECT * FROM product LIMIT 10;
+SELECT * FROM targets LIMIT 10;
 
--- CLEAN 
+-- Newly added / supporting tables
+SELECT * FROM billofmaterials LIMIT 10;
+SELECT * FROM salesorderdetail LIMIT 10;
+SELECT * FROM employee LIMIT 10;
+SELECT * FROM employee_dept_hist LIMIT 10;
+SELECT * FROM department LIMIT 10;
+SELECT * FROM specialoffer LIMIT 10;
+SELECT * FROM specialofferproduct LIMIT 10;
+
+
+-- ALTERING THE TABLES
 
 ALTER TABLE sales
   ALTER COLUMN sales TYPE numeric
@@ -34,6 +45,61 @@ ALTER TABLE targets
 ALTER TABLE sales
   ALTER COLUMN orderdate TYPE date
   USING orderdate::date;
+
+-- SALES ORDER DETAIL
+ALTER TABLE salesorderdetail
+  ALTER COLUMN specialofferid TYPE int USING specialofferid::int,
+  ALTER COLUMN productid TYPE int USING productid::int;
+
+
+-- EMPLOYEE
+ALTER TABLE employee
+  ALTER COLUMN birthdate TYPE date USING birthdate::date,
+  ALTER COLUMN hiredate TYPE date USING hiredate::date,
+  ALTER COLUMN salariedflag TYPE boolean USING (salariedflag::text IN ('1','t','true','Y')),
+  ALTER COLUMN vacationhours TYPE integer USING vacationhours::integer,
+  ALTER COLUMN sickleavehours TYPE integer USING sickleavehours::integer,
+  ALTER COLUMN currentflag TYPE boolean USING (currentflag::text IN ('1','t','true','Y')),
+  ALTER COLUMN modifieddate TYPE timestamp USING modifieddate::timestamp;
+
+-- EMPLOYEE DEPARTMENT HISTORY
+ALTER TABLE employee_dept_hist
+  ALTER COLUMN startdate TYPE date USING startdate::date,
+  ALTER COLUMN enddate TYPE date USING NULLIF(enddate, '')::date,
+  ALTER COLUMN modifieddate TYPE timestamp USING modifieddate::timestamp;
+
+-- DEPARTMENT
+ALTER TABLE department
+  ALTER COLUMN modifieddate TYPE timestamp USING modifieddate::timestamp;
+
+-- SPECIAL OFFER
+ALTER TABLE specialoffer
+  ALTER COLUMN discountpct TYPE numeric USING REPLACE(discountpct, '%','')::numeric,
+  ALTER COLUMN startdate TYPE date USING startdate::date,
+  ALTER COLUMN enddate TYPE date USING enddate::date,
+  ALTER COLUMN minqty TYPE integer USING minqty::integer,
+  ALTER COLUMN maxqty TYPE integer USING NULLIF(maxqty,'')::integer,
+  ALTER COLUMN modifieddate TYPE timestamp USING modifieddate::timestamp;
+
+-- SPECIAL OFFER PRODUCT
+ALTER TABLE specialofferproduct
+  ALTER COLUMN modifieddate TYPE timestamp USING modifieddate::timestamp;
+
+-- SALES ORDER DETAIL
+ALTER TABLE salesorderdetail
+  ALTER COLUMN orderqty TYPE integer USING orderqty::integer,
+  ALTER COLUMN unitprice TYPE numeric USING REPLACE(REPLACE(unitprice,'$',''),',','')::numeric,
+  ALTER COLUMN unitpricediscount TYPE numeric USING REPLACE(REPLACE(unitpricediscount,'$',''),',','')::numeric,
+  ALTER COLUMN linetotal TYPE numeric USING REPLACE(REPLACE(linetotal,'$',''),',','')::numeric,
+  ALTER COLUMN modifieddate TYPE timestamp USING modifieddate::timestamp;
+
+-- BILL OF MATERIALS
+ALTER TABLE billofmaterials
+  ALTER COLUMN startdate TYPE date USING startdate::date,
+  ALTER COLUMN enddate TYPE date USING NULLIF(enddate,'')::date,
+  ALTER COLUMN perassemblyqty TYPE numeric USING perassemblyqty::numeric,
+  ALTER COLUMN modifieddate TYPE timestamp USING modifieddate::timestamp;
+
 
 
 
@@ -173,24 +239,30 @@ ORDER BY avg_order_value DESC;
 -- each employee currently belongs to, 
 -- based on their complete employment history.
 
-WITH order_totals AS (
-  SELECT
-    s.employeekey,
-    s.salesordernumber,
-    SUM(s.sales) AS order_total
-  FROM sales s
-  GROUP BY s.employeekey, s.salesordernumber
+WITH current_dept AS (
+    SELECT
+        edh.businessentityid,
+        edh.departmentid,
+        d.name AS department_name,
+        d.groupname,
+        ROW_NUMBER() OVER (PARTITION BY edh.businessentityid ORDER BY edh.startdate DESC) AS rn
+    FROM employee_dept_hist edh
+    JOIN department d
+      ON edh.departmentid = d.departmentid
+    WHERE edh.enddate IS NULL
 )
 SELECT
-  sp.employeekey,
-  sp.employeeid,
-  sp.salesperson,
-  AVG(o.order_total) AS avg_order_value
-FROM order_totals o
-JOIN salesperson sp 
-  ON o.employeekey = sp.employeekey
-GROUP BY sp.employeekey, sp.employeeid, sp.salesperson
-ORDER BY avg_order_value DESC;
+    e.businessentityid,
+    e.jobtitle,
+    e.hiredate,
+    c.department_name,
+    c.groupname
+FROM employee e
+LEFT JOIN current_dept c
+  ON e.businessentityid = c.businessentityid
+WHERE c.rn = 1
+ORDER BY e.businessentityid;
+
 
 
 -- Challenge T1: 
@@ -452,6 +524,31 @@ ORDER BY second_order_date;
 -- during a special offer period 
 -- to their average daily sales 
 -- outside of any offer period.
+SELECT
+    s.specialofferid,
+    s.description AS offer_description,
+    s.discountpct,
+    p.productkey,
+    p.product AS product_name,
+    SUM(sod.orderqty::int) AS total_qty,
+    SUM(sod.linetotal::numeric) AS total_sales
+FROM salesorderdetail sod
+JOIN specialoffer s
+  ON sod.specialofferid::int = s.specialofferid
+JOIN product p
+  ON sod.productid::int = p.productkey
+JOIN specialofferproduct sop
+  ON sop.productid = p.productkey
+GROUP BY s.specialofferid, s.description, s.discountpct, p.productkey, p.product
+ORDER BY total_sales DESC;
+
+
+SELECT * FROM product LIMIT 5;
+
+SELECT DISTINCT productid
+FROM salesorderdetail
+LIMIT 10;
+
 
 -- Challenge T8: 
 -- Recursive Employee Hierarchy: 
@@ -467,6 +564,37 @@ ORDER BY second_order_date;
 -- This is a classic hierarchical problem 
 -- that leverages the self-referencing 
 -- nature of the Employee table.  
+SELECT
+    e.businessentityid,
+    e.jobtitle,
+    d.name AS department_name,
+    d.groupname,
+    edh.startdate::date,
+    COALESCE(
+        CASE 
+            WHEN edh.enddate ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' THEN edh.enddate::date 
+        END,
+        CURRENT_DATE
+    ) AS enddate,
+    EXTRACT(
+        YEAR FROM AGE(
+            COALESCE(
+                CASE 
+                    WHEN edh.enddate ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' THEN edh.enddate::date 
+                END,
+                CURRENT_DATE
+            ), 
+            edh.startdate::date
+        )
+    ) AS years_in_dept
+FROM employee e
+JOIN employee_dept_hist edh
+  ON e.businessentityid = edh.businessentityid
+JOIN department d
+  ON edh.departmentid = d.departmentid
+WHERE edh.startdate ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}$'
+ORDER BY e.businessentityid, edh.startdate::date;
+
 
 -- Challenge T9: 
 -- Recursive Product Assembly: 
@@ -482,6 +610,39 @@ ORDER BY second_order_date;
 -- into its constituent parts, 
 -- leveraging the hierarchical 
 -- structure of the BillOfMaterials table.  
+
+
+-- This shows each product and its direct components:
+SELECT
+    b.productassemblyid,
+    p1.product AS finished_product,
+    b.componentid,
+    p2.product AS component_product,
+    b.perassemblyqty::numeric,
+    b.startdate::date,
+    COALESCE(NULLIF(b.enddate,'')::date, CURRENT_DATE) AS enddate
+FROM billofmaterials b
+JOIN product p1
+  ON (b.productassemblyid::text ~ '^[0-9]+$' AND b.productassemblyid::int = p1.productkey)
+JOIN product p2
+  ON (b.componentid::text ~ '^[0-9]+$' AND b.componentid::int = p2.productkey)
+WHERE b.productassemblyid::text ~ '^[0-9]+$'
+  AND b.componentid::text ~ '^[0-9]+$'
+ORDER BY b.productassemblyid::int, b.componentid::int;
+
+--Which components appear most frequently across assemblies:
+SELECT
+    p2.product AS component_product,
+    COUNT(DISTINCT b.productassemblyid::int) AS used_in_products,
+    SUM(b.perassemblyqty::numeric) AS total_quantity_required
+FROM billofmaterials b
+JOIN product p2
+  ON (b.componentid::text ~ '^[0-9]+$' AND b.componentid::int = p2.productkey)
+WHERE b.componentid::text ~ '^[0-9]+$'
+  AND b.productassemblyid::text ~ '^[0-9]+$'
+GROUP BY p2.product
+ORDER BY used_in_products DESC, total_quantity_required DESC;
+
 
 -- Challenge T10: 
 -- Identifying "Churned" 
