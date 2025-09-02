@@ -6,7 +6,7 @@ ALTER TABLE pan_numbers
 RENAME COLUMN "Pan_Numbers" TO pan_number;  
 
 
---- PAN Number Validation Project using SQL ---
+--- PAN Numbers Validation Project using SQL ---
 
 
 -- 1. Identify and handle missing data
