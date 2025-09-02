@@ -111,6 +111,8 @@ select cln.pan_number
 from cte_cleaned_pan cln
 left join cte_valid_pan vld on vld.pan_number = cln.pan_number;
 
+SELECT * FROM vw_valid_invalid_pans;
+
 	
 -- Summary report
 with cte as 
